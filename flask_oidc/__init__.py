@@ -240,9 +240,10 @@ class OpenIDConnect(object):
         """
         if g.oidc_id_token is None and access_token is None:
             raise Exception('User was not authenticated')
-        info = {}
-        all_info = None
-        for field in fields:
+        #info = {}
+        #all_info = None
+        info = self._retrieve_userinfo(access_token)
+        """for field in fields:
             if access_token is None and field in g.oidc_id_token:
                 info[field] = g.oidc_id_token[field]
             elif current_app.config['OIDC_USER_INFO_ENABLED']:
@@ -256,7 +257,7 @@ class OpenIDConnect(object):
                     info[field] = all_info[field]
                 else:
                     # We didn't get this information
-                    pass
+                    pass"""
         return info
 
     def get_access_token(self):
@@ -328,7 +329,7 @@ class OpenIDConnect(object):
                 body=urlencode({"access_token": access_token}),
                 headers={'Content-Type': 'application/x-www-form-urlencoded'})
 
-        logger.debug('Retrieved user info: %s' % content)
+        logger.info('Retrieved user info: %s' % content)
         info = _json_loads(content)
 
         g._oidc_userinfo = info
